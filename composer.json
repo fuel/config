@@ -1,0 +1,64 @@
+{
+    "name": "fuel/config",
+    "type": "library",
+    "description": "Configuration container with schema validation",
+    "keywords": [
+        "fuel",
+        "fuelphp",
+        "php",
+        "container",
+        "configuration"
+    ],
+    "homepage": "https://fuelphp.org/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Colin O'Dell",
+            "email": "colinodell@gmail.com>",
+            "role": "Original developer"
+        },
+        {
+            "name": "Fuel PHP team",
+            "email": "contact@fuelphp.org",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/fuel/config/issues",
+        "source": "https://github.com/fuel/config",
+        "docs": "https://fuelphp.org/docs/config"
+    },
+    "require": {
+        "php": "^8.2",
+        "dflydev/dot-access-data": "^3.0.1",
+        "nette/schema": "^1.2"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    },
+    "provide": {
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Fuel\\Config\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Fuel\\Config\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --colors=always",
+        "static": "psalm",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "check": [
+            "@cs-check",
+            "@static",
+            "@test"
+        ]
+    }
+}
