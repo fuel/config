@@ -1,22 +1,34 @@
-<?php
-
-declare(strict_types=1);
-
-/*
- * This file is part of the league/config package.
- *
- * (c) Colin O'Dell <colinodell@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
-namespace League\Config;
+<?php declare(strict_types=1);
 
 /**
- * Implement this class to facilitate setter injection of the configuration where needed
+ * The Fuel PHP Framework is a fast, simple and flexible development framework
+ *
+ * @package    fuel
+ * @version    2.0.0
+ * @author     FlexCoders Ltd, Fuel The PHP Framework Team
+ * @license    MIT License
+ * @copyright  2023 FlexCoders Ltd, The Fuel PHP Framework Team
+ * @link       https://fuelphp.org
+ */
+
+namespace Fuel\Config;
+
+/**
+ * Accepts a Config instance
  */
 interface ConfigurationAwareInterface
 {
-    public function setConfiguration(ConfigurationInterface $configuration): void;
+	/**
+	 * Returns the Configuration container
+	 *
+	 * @return Configuration
+	 */
+	public function getConfig(): Configuration;
+
+	/**
+	 * Sets the Configuration container
+	 *
+	 * @param Configuration $config
+	 */
+	public function setConfig(Configuration $config): void;
 }

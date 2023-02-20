@@ -1,19 +1,31 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-/*
- * This file is part of the league/config package.
+/**
+ * The Fuel PHP Framework is a fast, simple and flexible development framework
  *
- * (c) Colin O'Dell <colinodell@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @package    fuel
+ * @version    2.0.0
+ * @author     FlexCoders Ltd, Fuel The PHP Framework Team
+ * @license    MIT License
+ * @copyright  2019-2021 Phil Bennett
+ * @copyright  2023 FlexCoders Ltd, The Fuel PHP Framework Team
+ * @link       https://fuelphp.org
  */
 
-namespace League\Config\Exception;
+namespace Fuel\Config\Exception;
 
-class InvalidConfigurationException extends \UnexpectedValueException implements ConfigurationExceptionInterface
+use UnexpectedValueException;
+
+use sprintf;
+use is_object;
+use print_r;
+use get_class;
+
+/**
+ * -----------------------------------------------------------------------------
+ */
+
+class InvalidConfigurationException extends UnexpectedValueException implements ConfigurationExceptionInterface
 {
     /**
      * @param string  $option      Name/path of the option
@@ -22,9 +34,10 @@ class InvalidConfigurationException extends \UnexpectedValueException implements
      */
     public static function forConfigOption(string $option, $valueGiven, ?string $description = null): self
     {
-        $message = \sprintf('Invalid config option for "%s": %s', $option, self::getDebugValue($valueGiven));
-        if ($description !== null) {
-            $message .= \sprintf(' (%s)', $description);
+        $message = sprintf('Invalid config option for "%s": %s', $option, self::getDebugValue($valueGiven));
+        if ($description !== null)
+        {
+            $message .= sprintf(' (%s)', $description);
         }
 
         return new self($message);
@@ -37,10 +50,11 @@ class InvalidConfigurationException extends \UnexpectedValueException implements
      */
     private static function getDebugValue($value): string
     {
-        if (\is_object($value)) {
-            return \get_class($value);
+        if (\s_object($value))
+        {
+            return get_class($value);
         }
 
-        return \print_r($value, true);
+        return print_r($value, true);
     }
 }

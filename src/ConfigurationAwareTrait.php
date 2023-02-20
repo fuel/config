@@ -7,7 +7,6 @@
  * @version    2.0.0
  * @author     FlexCoders Ltd, Fuel The PHP Framework Team
  * @license    MIT License
- * @copyright  2019-2021 Phil Bennett
  * @copyright  2023 FlexCoders Ltd, The Fuel PHP Framework Team
  * @link       https://fuelphp.org
  */
@@ -15,8 +14,28 @@
 namespace Fuel\Config;
 
 /**
- * An interface that provides the ability to set both the schema and configuration values
+ * Accepts a Configuration instance
  */
-interface ConfigurationBuilderInterface extends MutableConfigurationInterface, SchemaBuilderInterface
+trait ConfigurationAwareTrait
 {
+	/**
+	 * @var Config
+	 */
+	protected Configuration $config;
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getConfig(): Configuration
+	{
+		return $this->config;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setConfig(Configuration $config): void
+	{
+		$this->config = $config;
+	}
 }

@@ -1,54 +1,69 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-/*
- * This file is part of the league/config package.
+/**
+ * The Fuel PHP Framework is a fast, simple and flexible development framework
  *
- * (c) Colin O'Dell <colinodell@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @package    fuel
+ * @version    2.0.0
+ * @author     FlexCoders Ltd, Fuel The PHP Framework Team
+ * @license    MIT License
+ * @copyright  2019-2021 Phil Bennett
+ * @copyright  2023 FlexCoders Ltd, The Fuel PHP Framework Team
+ * @link       https://fuelphp.org
  */
 
-namespace League\Config;
+namespace Fuel\Config;
+
+use Fuel\Config\Exception\UnknownOptionException;
+use Fuel\Config\Exception\ValidationException;
+use Fuel\FileSystem\{Finder, FinderAwareTrait};
 
 use Dflydev\DotAccessData\Data;
 use Dflydev\DotAccessData\DataInterface;
 use Dflydev\DotAccessData\Exception\DataException;
 use Dflydev\DotAccessData\Exception\InvalidPathException;
 use Dflydev\DotAccessData\Exception\MissingPathException;
-use League\Config\Exception\UnknownOptionException;
-use League\Config\Exception\ValidationException;
 use Nette\Schema\Expect;
 use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Nette\Schema\ValidationException as NetteValidationException;
 
-final class Configuration implements ConfigurationBuilderInterface, ConfigurationInterface
+use substr;
+use strpos;
+
+class Configuration implements ConfigurationBuilderInterface, ConfigurationInterface
 {
+    use FinderAwareTrait;
+
+    /**
+     * Fuel Finder Instance
+     *
+     * @since 2.0.0
+     */
+    protected Finder $finder;
+
     /** @psalm-readonly */
-    private Data $userConfig;
+    protected Data $userConfig;
 
     /**
      * @var array<string, Schema>
      *
      * @psalm-allow-private-mutation
      */
-    private array $configSchemas = [];
+    protected array $configSchemas = [];
 
     /** @psalm-allow-private-mutation */
-    private Data $finalConfig;
+    protected Data $finalConfig;
 
     /**
      * @var array<string, mixed>
      *
      * @psalm-allow-private-mutation
      */
-    private array $cache = [];
+    protected array $cache = [];
 
     /** @psalm-readonly */
-    private ConfigurationInterface $reader;
+    protected ConfigurationInterface $reader;
 
     /**
      * @param array<string, Schema> $baseSchemas
@@ -60,6 +75,98 @@ final class Configuration implements ConfigurationBuilderInterface, Configuratio
         $this->finalConfig   = new Data();
 
         $this->reader = new ReadOnlyConfiguration($this);
+    }
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Load configuration values from a file
+     * -----------------------------------------------------------------------------
+     *
+     * @since 2.0.0
+     */
+    public function load(string $key, string $file): void
+    {
+        // check if we've passed a filename and we can access the file
+        if (is_file($file) and is_readable($file))
+        {
+            // load the config file
+            $config = import($file);
+
+            // validate it
+            if ( ! is_array($config))
+            {
+                // @TODO
+                throw new InvalidConfigurationException(sprintf('Config file %s does not return an array !', $file));
+            }
+
+            // merge it
+            $this->merge([$key => $config]);
+        }
+    }
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Load a configation
+     * -----------------------------------------------------------------------------
+     *
+     * And optionally validate it if there is a schema definition for it
+     *
+     * @since 2.0.0
+     */
+    public function loadConfig(string $name): array
+    {
+        // check if we have a schema for this config
+        $files = $this->finder->findAllFiles('schemas'.DS.$name);
+
+        // and load the last one found
+        if ($files)
+        {
+            $this->loadSchema($name, end($files));
+        }
+
+        // now find all config files themseelfs
+        $files = $this->finder->findAllFiles('config'.DS.$name);
+
+        foreach ($files ?: [] as $file)
+        {
+            $this->load($name, $file);
+        }
+
+        return $this->get($name);
+    }
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Add a new schema from a Schema file
+     * -----------------------------------------------------------------------------
+     *
+     * Registers a new configuration schema at the given top-level key
+     *
+     * @since 2.0.0
+     */
+    public function loadSchema(string $key, string $file): void
+    {
+        // check if we've passed a filename and we can access the file
+        if (is_file($file) and is_readable($file))
+        {
+            $schema = import($file);
+
+            // make sure we have a schema now
+            if ( ! $schema instanceOf Schema)
+            {
+                // @TODO
+                throw new InvalidConfigurationException(sprintf('Scheme file %s does contain a schema definition !', $file));
+            }
+        }
+        else
+        {
+            // no schema find, create one that only validates if the config
+            // file returns an array
+            $schema = Expect::structure([]);
+        }
+
+        // load the schema
+        $this->addSchema($key, $schema);
     }
 
     /**
@@ -95,9 +202,12 @@ final class Configuration implements ConfigurationBuilderInterface, Configuratio
     {
         $this->invalidate();
 
-        try {
+        try
+        {
             $this->userConfig->set($key, $value);
-        } catch (DataException $ex) {
+        }
+        catch (DataException $ex)
+        {
             throw new UnknownOptionException($ex->getMessage(), $key, (int) $ex->getCode(), $ex);
         }
     }
@@ -107,19 +217,27 @@ final class Configuration implements ConfigurationBuilderInterface, Configuratio
      *
      * @psalm-external-mutation-free
      */
-    public function get(string $key)
+    public function get(string $key, mixed $default = null)
     {
-        if (\array_key_exists($key, $this->cache)) {
+        if (\array_key_exists($key, $this->cache))
+        {
             return $this->cache[$key];
         }
 
-        try {
+        try
+        {
             $this->build(self::getTopLevelKey($key));
 
             return $this->cache[$key] = $this->finalConfig->get($key);
-        } catch (InvalidPathException | MissingPathException $ex) {
-            throw new UnknownOptionException($ex->getMessage(), $key, (int) $ex->getCode(), $ex);
         }
+        catch (InvalidPathException | MissingPathException $ex)
+        {
+            if (func_num_args() == 1)
+            {
+                throw new UnknownOptionException($ex->getMessage(), $key, (int) $ex->getCode(), $ex);
+            }
+        }
+        return $default;
     }
 
     /**
@@ -129,15 +247,19 @@ final class Configuration implements ConfigurationBuilderInterface, Configuratio
      */
     public function exists(string $key): bool
     {
-        if (\array_key_exists($key, $this->cache)) {
+        if (\array_key_exists($key, $this->cache))
+        {
             return true;
         }
 
-        try {
+        try
+        {
             $this->build(self::getTopLevelKey($key));
 
             return $this->finalConfig->has($key);
-        } catch (InvalidPathException | UnknownOptionException $ex) {
+        }
+        catch (InvalidPathException | UnknownOptionException $ex)
+        {
             return false;
         }
     }
@@ -168,21 +290,27 @@ final class Configuration implements ConfigurationBuilderInterface, Configuratio
      */
     private function build(string $topLevelKey): void
     {
-        if ($this->finalConfig->has($topLevelKey)) {
+        if ($this->finalConfig->has($topLevelKey))
+        {
             return;
         }
 
-        if (! isset($this->configSchemas[$topLevelKey])) {
+        if (! isset($this->configSchemas[$topLevelKey]))
+        {
             throw new UnknownOptionException(\sprintf('Missing config schema for "%s"', $topLevelKey), $topLevelKey);
         }
 
-        try {
+        try
+        {
             $userData = [$topLevelKey => $this->userConfig->get($topLevelKey)];
-        } catch (DataException $ex) {
+        }
+        catch (DataException $ex)
+        {
             $userData = [];
         }
 
-        try {
+        try
+        {
             $schema    = $this->configSchemas[$topLevelKey];
             $processor = new Processor();
 
@@ -191,7 +319,9 @@ final class Configuration implements ConfigurationBuilderInterface, Configuratio
             $this->raiseAnyDeprecationNotices($processor->getWarnings());
 
             $this->finalConfig->import((array) self::convertStdClassesToArrays($processed));
-        } catch (NetteValidationException $ex) {
+        }
+        catch (NetteValidationException $ex)
+        {
             throw new ValidationException($ex);
         }
     }
@@ -211,12 +341,15 @@ final class Configuration implements ConfigurationBuilderInterface, Configuratio
      */
     private static function convertStdClassesToArrays($data)
     {
-        if ($data instanceof \stdClass) {
+        if ($data instanceof \stdClass)
+        {
             $data = (array) $data;
         }
 
-        if (\is_array($data)) {
-            foreach ($data as $k => $v) {
+        if (\is_array($data))
+        {
+            foreach ($data as $k => $v)
+            {
                 $data[$k] = self::convertStdClassesToArrays($v);
             }
         }
@@ -229,7 +362,8 @@ final class Configuration implements ConfigurationBuilderInterface, Configuratio
      */
     private function raiseAnyDeprecationNotices(array $warnings): void
     {
-        foreach ($warnings as $warning) {
+        foreach ($warnings as $warning)
+        {
             @\trigger_error($warning, \E_USER_DEPRECATED);
         }
     }
@@ -239,17 +373,19 @@ final class Configuration implements ConfigurationBuilderInterface, Configuratio
      */
     private static function getTopLevelKey(string $path): string
     {
-        if (\strlen($path) === 0) {
+        if (\strlen($path) === 0)
+        {
             throw new InvalidPathException('Path cannot be an empty string');
         }
 
         $path = \str_replace(['.', '/'], '.', $path);
 
-        $firstDelimiter = \strpos($path, '.');
-        if ($firstDelimiter === false) {
+        $firstDelimiter = strpos($path, '.');
+        if ($firstDelimiter === false)
+        {
             return $path;
         }
 
-        return \substr($path, 0, $firstDelimiter);
+        return substr($path, 0, $firstDelimiter);
     }
 }

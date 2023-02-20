@@ -1,21 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-/*
- * This file is part of the league/config package.
+/**
+ * The Fuel PHP Framework is a fast, simple and flexible development framework
  *
- * (c) Colin O'Dell <colinodell@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @package    fuel
+ * @version    2.0.0
+ * @author     FlexCoders Ltd, Fuel The PHP Framework Team
+ * @license    MIT License
+ * @copyright  2019-2021 Phil Bennett
+ * @copyright  2023 FlexCoders Ltd, The Fuel PHP Framework Team
+ * @link       https://fuelphp.org
  */
 
-namespace League\Config\Exception;
+namespace Fuel\Config\Exception;
+
+use Throwable;
 
 /**
  * Marker interface for any/all exceptions thrown by this library
  */
-interface ConfigurationExceptionInterface extends \Throwable
+interface ConfigurationExceptionInterface extends Throwable
 {
 }

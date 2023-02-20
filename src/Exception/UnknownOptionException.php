@@ -1,24 +1,40 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-/*
- * This file is part of the league/config package.
+/**
+ * The Fuel PHP Framework is a fast, simple and flexible development framework
  *
- * (c) Colin O'Dell <colinodell@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @package    fuel
+ * @version    2.0.0
+ * @author     FlexCoders Ltd, Fuel The PHP Framework Team
+ * @license    MIT License
+ * @copyright  2019-2021 Phil Bennett
+ * @copyright  2023 FlexCoders Ltd, The Fuel PHP Framework Team
+ * @link       https://fuelphp.org
  */
 
-namespace League\Config\Exception;
+namespace Fuel\Config\Exception;
 
 use Throwable;
+use InvalidArgumentException;
 
-final class UnknownOptionException extends \InvalidArgumentException implements ConfigurationExceptionInterface
+/**
+ * -----------------------------------------------------------------------------
+ */
+
+class UnknownOptionException extends InvalidArgumentException implements ConfigurationExceptionInterface
 {
-    private string $path;
+     /**
+     * @var  string
+     */
+    protected string $path;
 
+    /**
+     * -----------------------------------------------------------------------------
+     *
+     * -----------------------------------------------------------------------------
+     *
+     * @since 2.0.0
+     */
     public function __construct(string $message, string $path, int $code = 0, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
@@ -26,6 +42,13 @@ final class UnknownOptionException extends \InvalidArgumentException implements 
         $this->path = $path;
     }
 
+    /**
+     * -----------------------------------------------------------------------------
+     *
+     * -----------------------------------------------------------------------------
+     *
+     * @since 2.0.0
+     */
     public function getPath(): string
     {
         return $this->path;

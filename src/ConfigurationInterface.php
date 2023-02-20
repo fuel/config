@@ -1,20 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-/*
- * This file is part of the league/config package.
+/**
+ * The Fuel PHP Framework is a fast, simple and flexible development framework
  *
- * (c) Colin O'Dell <colinodell@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @package    fuel
+ * @version    2.0.0
+ * @author     FlexCoders Ltd, Fuel The PHP Framework Team
+ * @license    MIT License
+ * @copyright  2019-2021 Phil Bennett
+ * @copyright  2023 FlexCoders Ltd, The Fuel PHP Framework Team
+ * @link       https://fuelphp.org
  */
 
-namespace League\Config;
+namespace Fuel\Config;
 
-use League\Config\Exception\UnknownOptionException;
-use League\Config\Exception\ValidationException;
+use Fuel\Config\Exception\UnknownOptionException;
+use Fuel\Config\Exception\ValidationException;
 
 /**
  * Interface for reading configuration values
@@ -31,7 +32,7 @@ interface ConfigurationInterface
      * @throws ValidationException if the schema failed to validate the given input
      * @throws UnknownOptionException if the requested key does not exist or is malformed
      */
-    public function get(string $key);
+    public function get(string $key, mixed $default = null);
 
     /**
      * @param string $key Configuration option path/key
