@@ -25,7 +25,7 @@ class ValidationException extends InvalidConfigurationException
      /**
      * @var  string
      */
-    proteected array $messages;
+    protected array $messages;
 
     /**
      * -----------------------------------------------------------------------------
