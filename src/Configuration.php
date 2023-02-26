@@ -16,7 +16,7 @@ namespace Fuel\Config;
 
 use Fuel\Config\Exception\UnknownOptionException;
 use Fuel\Config\Exception\ValidationException;
-use Fuel\FileSystem\{Finder, FinderAwareTrait};
+use Fuel\FileSystem\Finder;
 
 use Dflydev\DotAccessData\Data;
 use Dflydev\DotAccessData\DataInterface;
@@ -33,8 +33,6 @@ use strpos;
 
 class Configuration implements ConfigurationBuilderInterface, ConfigurationInterface
 {
-    use FinderAwareTrait;
-
     /**
      * Fuel Finder Instance
      *
@@ -68,8 +66,10 @@ class Configuration implements ConfigurationBuilderInterface, ConfigurationInter
     /**
      * @param array<string, Schema> $baseSchemas
      */
-    public function __construct(array $baseSchemas = [])
+    public function __construct(Finder $finder, array $baseSchemas = [])
     {
+        $this->finder        = $finder;
+
         $this->configSchemas = $baseSchemas;
         $this->userConfig    = new Data();
         $this->finalConfig   = new Data();
