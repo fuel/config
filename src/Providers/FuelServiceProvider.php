@@ -15,9 +15,9 @@ namespace Fuel\Config\Providers;
 
 use Fuel\Container\ServiceProvider\{AbstractServiceProvider, BootableServiceProviderInterface};
 use Fuel\Container\Argument\RuntimeValueArgument;
-use Fuel\Config\{Configuration, ConfigurationAwareInterface};
+use Fuel\Config\Configuration;
+use Fuel\FileSystem\Finder;
 
-use function array_merge;
 use function in_array;
 
 /**
@@ -39,9 +39,6 @@ class FuelServiceProvider extends AbstractServiceProvider implements BootableSer
      */
     public function boot(): void
     {
-        $this->getContainer()
-            ->inflector(ConfigurationAwareInterface::class)
-                ->invokeMethod('setConfig', ['config.active']);
     }
 
     /**
@@ -72,6 +69,8 @@ class FuelServiceProvider extends AbstractServiceProvider implements BootableSer
     public function register(): void
     {
         $this->getContainer()
-            ->add(Configuration::class);
+            ->add(Configuration::class)
+                ->addArgument(Finder::class)
+                ->setShared();
     }
 }
