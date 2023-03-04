@@ -19,5 +19,5 @@ namespace Fuel\Config;
  */
 interface ConfigurationProviderInterface
 {
-    public function getConfiguration(): ConfigurationInterface;
+	public function getConfiguration(): ConfigurationInterface;
 }

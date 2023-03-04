@@ -23,34 +23,34 @@ use InvalidArgumentException;
 
 class UnknownOptionException extends InvalidArgumentException implements ConfigurationExceptionInterface
 {
-     /**
-     * @var  string
-     */
-    protected string $path;
+	 /**
+	 * @var  string
+	 */
+	protected string $path;
 
-    /**
-     * -----------------------------------------------------------------------------
-     *
-     * -----------------------------------------------------------------------------
-     *
-     * @since 2.0.0
-     */
-    public function __construct(string $message, string $path, int $code = 0, ?Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
+	/**
+	 * -----------------------------------------------------------------------------
+	 *
+	 * -----------------------------------------------------------------------------
+	 *
+	 * @since 2.0.0
+	 */
+	public function __construct(string $message, string $path, int $code = 0, ?Throwable $previous = null)
+	{
+		parent::__construct($message, $code, $previous);
 
-        $this->path = $path;
-    }
+		$this->path = $path;
+	}
 
-    /**
-     * -----------------------------------------------------------------------------
-     *
-     * -----------------------------------------------------------------------------
-     *
-     * @since 2.0.0
-     */
-    public function getPath(): string
-    {
-        return $this->path;
-    }
+	/**
+	 * -----------------------------------------------------------------------------
+	 *
+	 * -----------------------------------------------------------------------------
+	 *
+	 * @since 2.0.0
+	 */
+	public function getPath(): string
+	{
+		return $this->path;
+	}
 }

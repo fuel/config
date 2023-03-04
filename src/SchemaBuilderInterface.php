@@ -21,8 +21,8 @@ use Nette\Schema\Schema;
  */
 interface SchemaBuilderInterface
 {
-    /**
-     * Registers a new configuration schema at the given top-level key
-     */
-    public function addSchema(string $key, Schema $schema): void;
+	/**
+	 * Registers a new configuration schema at the given top-level key
+	 */
+	public function addSchema(string $key, Schema $schema): void;
 }

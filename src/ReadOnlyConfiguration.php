@@ -19,38 +19,38 @@ namespace Fuel\Config;
  */
 class ReadOnlyConfiguration implements ConfigurationInterface
 {
-    /*
-     * @var Configuration
-     */
-    protected Configuration $config;
+	/*
+	 * @var Configuration
+	 */
+	protected Configuration $config;
 
-    /**
-     * -----------------------------------------------------------------------------
-     *
-     * -----------------------------------------------------------------------------
-     *
-     * @since 2.0.0
-     */
-    public function __construct(Configuration $config)
-    {
-        $this->config = $config;
-    }
+	/**
+	 * -----------------------------------------------------------------------------
+	 *
+	 * -----------------------------------------------------------------------------
+	 *
+	 * @since 2.0.0
+	 */
+	public function __construct(Configuration $config)
+	{
+		$this->config = $config;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public function get(string $key, mixed $default = null)
-    {
-        if (func_num_args() === 1)
-        {
-            return $this->config->get($key);
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get(string $key, mixed $default = null): mixed
+	{
+		if (func_num_args() === 1)
+		{
+			return $this->config->get($key);
+		}
 
-        return $this->config->get($key, $default);
-    }
+		return $this->config->get($key, $default);
+	}
 
-    public function exists(string $key): bool
-    {
-        return $this->config->exists($key);
-    }
+	public function exists(string $key): bool
+	{
+		return $this->config->exists($key);
+	}
 }

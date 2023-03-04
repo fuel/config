@@ -22,37 +22,37 @@ use Nette\Schema\ValidationException as NetteException;
 
 class ValidationException extends InvalidConfigurationException
 {
-     /**
-     * @var  string
-     */
-    protected array $messages;
+	 /**
+	 * @var  string
+	 */
+	protected array $messages;
 
-    /**
-     * -----------------------------------------------------------------------------
-     *
-     * -----------------------------------------------------------------------------
-     *
-     * @since 2.0.0
-     */
-    public function __construct(NetteException $innerException)
-    {
-        parent::__construct($innerException->getMessage(), (int) $innerException->getCode(), $innerException);
+	/**
+	 * -----------------------------------------------------------------------------
+	 *
+	 * -----------------------------------------------------------------------------
+	 *
+	 * @since 2.0.0
+	 */
+	public function __construct(NetteException $innerException)
+	{
+		parent::__construct($innerException->getMessage(), (int) $innerException->getCode(), $innerException);
 
-        $this->messages = $innerException->getMessages();
-    }
+		$this->messages = $innerException->getMessages();
+	}
 
-    /**
-     * @return string[]
-     */
-    /**
-     * -----------------------------------------------------------------------------
-     *
-     * -----------------------------------------------------------------------------
-     *
-     * @since 2.0.0
-     */
-    public function getMessages(): array
-    {
-        return $this->messages;
-    }
+	/**
+	 * @return string[]
+	 */
+	/**
+	 * -----------------------------------------------------------------------------
+	 *
+	 * -----------------------------------------------------------------------------
+	 *
+	 * @since 2.0.0
+	 */
+	public function getMessages(): array
+	{
+		return $this->messages;
+	}
 }
