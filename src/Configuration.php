@@ -30,18 +30,18 @@ use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Nette\Schema\ValidationException as NetteValidationException;
 
-use array_key_exists;
-use func_num_args;
-use is_array;
-use is_file;
-use is_readable;
-use str_replace;
-use strlen;
-use strpos;
-use substr;
-use trigger_error;
+use function array_key_exists;
+use function func_num_args;
+use function is_array;
+use function is_file;
+use function is_readable;
+use function str_replace;
+use function strlen;
+use function strpos;
+use function substr;
+use function trigger_error;
 
-use E_USER_DEPRECATED;
+use const E_USER_DEPRECATED;
 
 class Configuration implements ConfigurationBuilderInterface, ConfigurationInterface
 {

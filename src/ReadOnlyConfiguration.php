@@ -14,6 +14,8 @@
 
 namespace Fuel\Config;
 
+use function func_num_args;
+
 /**
  * Provides read-only access to a given Configuration object
  */

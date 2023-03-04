@@ -16,10 +16,10 @@ namespace Fuel\Config\Exception;
 
 use UnexpectedValueException;
 
-use sprintf;
-use is_object;
-use print_r;
-use get_class;
+use function sprintf;
+use function is_object;
+use function print_r;
+use function get_class;
 
 /**
  * -----------------------------------------------------------------------------
