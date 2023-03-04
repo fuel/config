@@ -229,7 +229,7 @@ class Configuration implements ConfigurationBuilderInterface, ConfigurationInter
 	 *
 	 * @psalm-external-mutation-free
 	 */
-	public function get(string $key, mixed $default = null)
+	public function get(string $key, mixed $default = null): mixed
 	{
 		if (array_key_exists($key, $this->cache))
 		{
